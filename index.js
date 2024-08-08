@@ -66,7 +66,6 @@ function draw_grid(board, width, height) {
 }
 
 function fill_square(x, y, board, alive) {
-    console.log(x, y, alive)
     let width = document.getElementById("board").width / board_obj.width
     let height = document.getElementById("board").height / board_obj.height 
     x_pixel_cords = x * width
@@ -85,6 +84,18 @@ function cords_to_pixel(x, y, cord_width, cord_height) {
     y_result = y * (pixel_height / cord_height)
     return [x_result, y_result]
 }
+
+// Have to correct for offset of toolbar
+function pixel_to_cords(x, y, pixel_width, pixel_height) {
+    const y_offset = document.getElementById("toolbar").offsetHeight
+    const width_per_cell = pixel_width / board_obj.width
+    const height_per_cell = pixel_height / board_obj.height
+    const x_cord = Math.floor(x / width_per_cell)
+    const y_cord = Math.floor((y - y_offset) / height_per_cell)
+    console.log(x_cord, y_cord)
+    return {x_cord, y_cord}
+}
+
 for (let i = 0; i < board_obj.height; ++i) {
     const new_row = []
     for (let j = 0; j < board_obj.width; ++j) {
@@ -92,6 +103,13 @@ for (let i = 0; i < board_obj.height; ++i) {
     }
     board_obj.state.push(new_row)
 }
+
+let canvas = document.getElementById("board")
+canvas.addEventListener("click", event => {
+    const x = event.x
+    const y = event.y
+    pixel_to_cords(x, y, document.getElementById("board").width, document.getElementById("board").height)
+})
 
 draw_grid(board, board_obj.width, board_obj.height)
 board_obj.draw_state(board)
