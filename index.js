@@ -24,6 +24,7 @@ board_obj = {
         if (alive_neighbors  == 3) {return true}
         return false
     },
+
     update_state : function() {
         for (let i = 0; i < this.height; ++i) {
             for (let j = 0; this.width; ++j) {
@@ -32,6 +33,7 @@ board_obj = {
             }
         }
     },
+
     draw_state: function(board) {
         for (let i = 0; i < this.height; ++i) {
             for (let j = 0; j < this.width; ++ j) {
@@ -39,6 +41,19 @@ board_obj = {
                 fill_square(i, j, board, alive)
             }
         }
+    },
+
+    change_cell: function(x, y) { 
+        let alive
+        if (this.state[x][y]) {
+            this.state[x][y] = 0 
+            alive = false
+        }
+        else {
+            this.state[x][y] = 1
+            alive = true
+        }
+        fill_square(x, y, board, alive)
     }
 }
 
@@ -92,8 +107,8 @@ function pixel_to_cords(x, y, pixel_width, pixel_height) {
     const height_per_cell = pixel_height / board_obj.height
     const x_cord = Math.floor(x / width_per_cell)
     const y_cord = Math.floor((y - y_offset) / height_per_cell)
-    console.log(x_cord, y_cord)
-    return {x_cord, y_cord}
+    console.log(x_cord, y_cord, typeof(x_cord))
+    return [x_cord, y_cord]
 }
 
 for (let i = 0; i < board_obj.height; ++i) {
@@ -106,9 +121,13 @@ for (let i = 0; i < board_obj.height; ++i) {
 
 let canvas = document.getElementById("board")
 canvas.addEventListener("click", event => {
-    const x = event.x
-    const y = event.y
-    pixel_to_cords(x, y, document.getElementById("board").width, document.getElementById("board").height)
+    const x_pixel_cords = event.x
+    const y_pixel_cords = event.y
+    let cords = pixel_to_cords(x_pixel_cords, y_pixel_cords, document.getElementById("board").width, document.getElementById("board").height)
+    let x = cords[0]
+    let y = cords[1]
+    console.log(x, y)
+    board_obj.change_cell(x, y)
 })
 
 draw_grid(board, board_obj.width, board_obj.height)
