@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<head>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <div id="toolbar">
+        <div id = "size">
+            <div id="width">            
+                Width
+                Decrease 
+                <input id = "increase_width", type="button", value="<">
+                <input id = "width_val", type="text", value="10", name="width">
+                Increase
+                <input id = "decrease_width", type="button", value=">">
+            </div>
+            <div id="height"> 
+                Height
+                Decrease 
+                <input id="decrease_height", type="button", value="<">
+                <input id="height_val", type="text", value="10", name="width">
+                Increase
+                <input id="increase_height", type="button", value=">">
+            </div>
+        </div>
+
+        <div id="play">
+            <div id="back">
+                <input type="button", value = "backward">
+            </div> 
+            <div id="pause">
+                <input type="button", value="pause">
+            </div>
+            <div id="play">
+                <input type="button", value="play">
+            </div>
+            <div id="forward">
+                <input type="button", value="forward">
+            </div>
+        </div>
+    </div>
+    <canvas id="board" width="1280" height="720"></canvas>
+    <script src="index.js"></script>
+</body>
