@@ -6,28 +6,30 @@ board_obj = {
     state : [],
     is_alive : function (i, j) {
         let alive_neighbors = 0
+        let counter = 0
         for (let x_change = -1; x_change < 2; ++x_change) {
-            for (let y_change = -1; y_change < 2; ++ y_change) {
-                if (x_change == y_change == 0 ) {continue}
+            for (let y_change = -1; y_change < 2; ++y_change) {
+                if (x_change == 0 && y_change == 0) {continue}
+                if (x_change == 0 && y_change == 0) {console.log('here')}
                 if (i + x_change < 0 || i + x_change >= this.width) {continue}
                 if (j + y_change < 0 || j + y_change >= this.height) {continue}
-                if (this.state[i + x_change][j + y_change]) {
+                if (this.state[i + x_change][j + y_change] == 1) {
                     alive_neighbors++
                 }
             }
         }
-
-        if (this.state[i][j]) {
+        if (i == 0 && j == 0) {}
+        if (this.state[i][j] == 1) {
             if (alive_neighbors == 2 || alive_neighbors == 3) {return true}
             return false
         }
-        if (alive_neighbors  == 3) {return true}
+        if (alive_neighbors == 3) {return true}
         return false
     },
 
     update_state : function() {
         for (let i = 0; i < this.height; ++i) {
-            for (let j = 0; this.width; ++j) {
+            for (let j = 0; j < this.width; ++j) {
                 if (this.is_alive(i, j)) {this.state[i][j] = 1}
                 else {this.state[i][j] = 0}
             }
@@ -107,7 +109,6 @@ function pixel_to_cords(x, y, pixel_width, pixel_height) {
     const height_per_cell = pixel_height / board_obj.height
     const x_cord = Math.floor(x / width_per_cell)
     const y_cord = Math.floor((y - y_offset) / height_per_cell)
-    console.log(x_cord, y_cord, typeof(x_cord))
     return [x_cord, y_cord]
 }
 
@@ -126,9 +127,12 @@ canvas.addEventListener("click", event => {
     let cords = pixel_to_cords(x_pixel_cords, y_pixel_cords, document.getElementById("board").width, document.getElementById("board").height)
     let x = cords[0]
     let y = cords[1]
-    console.log(x, y)
     board_obj.change_cell(x, y)
 })
 
 draw_grid(board, board_obj.width, board_obj.height)
 board_obj.draw_state(board)
+document.getElementById("forward").addEventListener("click", () => {
+    board_obj.update_state()
+    board_obj.draw_state(board)
+})
