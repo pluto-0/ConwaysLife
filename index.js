@@ -3,43 +3,32 @@ let board = document.getElementById("board").getContext("2d")
 board_obj = {
     width : Number(document.getElementById("width_val").value),
     height : Number(document.getElementById("height_val").value),
-    state : [],
+    state : make_empty_state(document.getElementById("width_val").value, document.getElementById("height_val").value),
     is_alive : function (i, j) {
-        let alive_neighbors = 0
-        let counter = 0
-        for (let x_change = -1; x_change < 2; ++x_change) {
-            for (let y_change = -1; y_change < 2; ++y_change) {
-                if (x_change == 0 && y_change == 0) {continue}
-                if (x_change == 0 && y_change == 0) {console.log('here')}
-                if (i + x_change < 0 || i + x_change >= this.width) {continue}
-                if (j + y_change < 0 || j + y_change >= this.height) {continue}
-                if (this.state[i + x_change][j + y_change] == 1) {
-                    alive_neighbors++
-                }
-            }
-        }
-        if (i == 0 && j == 0) {}
+        let neighbors = this.alive_neighbors(i, j)
         if (this.state[i][j] == 1) {
-            if (alive_neighbors == 2 || alive_neighbors == 3) {return true}
+            if (neighbors == 2 || neighbors == 3) {return true}
             return false
         }
-        if (alive_neighbors == 3) {return true}
+        if (neighbors == 3) {return true}
         return false
     },
 
     update_state : function() {
+        let state_copy = make_empty_state(this.width, this.height)
         for (let i = 0; i < this.height; ++i) {
             for (let j = 0; j < this.width; ++j) {
-                if (this.is_alive(i, j)) {this.state[i][j] = 1}
-                else {this.state[i][j] = 0}
+                if (this.is_alive(i, j)) {state_copy[i][j] = 1}
+                else {state_copy[i][j] = 0}
             }
         }
+        this.state = state_copy
     },
 
     draw_state: function(board) {
         for (let i = 0; i < this.height; ++i) {
             for (let j = 0; j < this.width; ++ j) {
-                let alive = this.is_alive(i, j)
+                let alive = this.state[i][j] == 1
                 fill_square(i, j, board, alive)
             }
         }
@@ -47,7 +36,7 @@ board_obj = {
 
     change_cell: function(x, y) { 
         let alive
-        if (this.state[x][y]) {
+        if (this.state[x][y] == 1) {
             this.state[x][y] = 0 
             alive = false
         }
@@ -56,6 +45,21 @@ board_obj = {
             alive = true
         }
         fill_square(x, y, board, alive)
+    },
+
+    alive_neighbors: function(x, y) {
+        const possible_changes = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]]
+        let ans = 0
+        let new_x, new_y
+        for (let change of possible_changes) {
+            new_x = x + change[0]
+            new_y = y + change[1]
+            if (new_x < 0 || new_x >= this.width || new_y < 0 || new_y >= this.height) {
+                continue
+            }
+            if (this.state[new_x][new_y] == 1) {ans++}
+        }
+        return ans
     }
 }
 
@@ -112,13 +116,20 @@ function pixel_to_cords(x, y, pixel_width, pixel_height) {
     return [x_cord, y_cord]
 }
 
-for (let i = 0; i < board_obj.height; ++i) {
-    const new_row = []
-    for (let j = 0; j < board_obj.width; ++j) {
-        new_row.push(0)
+function make_empty_state(width, height) {
+    console.log(width, height)
+    let ans = []
+    for (let i = 0; i < height; ++i) {
+        const new_row = []
+        for (let j = 0; j < width; ++j) {
+            new_row.push(0)
+        }
+        ans.push(new_row)
     }
-    board_obj.state.push(new_row)
+    return ans
 }
+
+
 
 let canvas = document.getElementById("board")
 canvas.addEventListener("click", event => {
@@ -132,7 +143,9 @@ canvas.addEventListener("click", event => {
 
 draw_grid(board, board_obj.width, board_obj.height)
 board_obj.draw_state(board)
-document.getElementById("forward").addEventListener("click", () => {
-    board_obj.update_state()
-    board_obj.draw_state(board)
+document.getElementById("forward").addEventListener("mouseup", event => {
+    if (event.button == 0) {
+        board_obj.update_state()
+        board_obj.draw_state(board)
+    }
 })
