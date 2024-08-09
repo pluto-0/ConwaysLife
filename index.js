@@ -4,6 +4,7 @@ board_obj = {
     width : Number(document.getElementById("width_val").value),
     height : Number(document.getElementById("height_val").value),
     state : make_empty_state(document.getElementById("width_val").value, document.getElementById("height_val").value),
+    stack: [],
     is_alive : function (i, j) {
         let neighbors = this.alive_neighbors(i, j)
         if (this.state[i][j] == 1) {
@@ -22,6 +23,7 @@ board_obj = {
                 else {state_copy[i][j] = 0}
             }
         }
+        this.stack.push(['update', this.state])
         this.state = state_copy
     },
 
@@ -36,6 +38,7 @@ board_obj = {
 
     change_cell: function(x, y) { 
         let alive
+        this.stack.push(['cell_change', x, y, this.state[x][y]])
         if (this.state[x][y] == 1) {
             this.state[x][y] = 0 
             alive = false
@@ -117,7 +120,6 @@ function pixel_to_cords(x, y, pixel_width, pixel_height) {
 }
 
 function make_empty_state(width, height) {
-    console.log(width, height)
     let ans = []
     for (let i = 0; i < height; ++i) {
         const new_row = []
@@ -147,5 +149,19 @@ document.getElementById("forward").addEventListener("mouseup", event => {
     if (event.button == 0) {
         board_obj.update_state()
         board_obj.draw_state(board)
+    }
+})
+
+document.getElementById("back").addEventListener("mouseup", () => {
+    if (board_obj.stack.length > 0) {
+        const change = board_obj.stack.pop()
+        if (change[0] == 'cell_change') {
+            board_obj.state[change[1]][change[2]] = change[3]
+            fill_square(change[1], change[2], board, change[3] == 1)
+        }
+        else if (change[0] == 'update') {
+            board_obj.state = change[1]
+            board_obj.draw_state(board)
+        }
     }
 })
