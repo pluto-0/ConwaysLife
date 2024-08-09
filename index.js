@@ -131,8 +131,6 @@ function make_empty_state(width, height) {
     return ans
 }
 
-
-
 let canvas = document.getElementById("board")
 canvas.addEventListener("click", event => {
     const x_pixel_cords = event.x
@@ -164,4 +162,10 @@ document.getElementById("back").addEventListener("mouseup", () => {
             board_obj.draw_state(board)
         }
     }
+})
+
+document.getElementById("width_val").addEventListener("change", function change_width() {
+    board_obj.state = make_empty_state(parseInt(this.value), board_obj.height)
+    board_obj.width = parseInt(this.value)
+    draw_grid(board, board_obj.width, board_obj.height)
 })
