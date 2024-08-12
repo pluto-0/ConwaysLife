@@ -193,11 +193,13 @@ document.getElementById("increase_width").addEventListener("mouseup", function i
 })
 
 document.getElementById("decrease_width").addEventListener("mouseup", function decrease_width() {
-    board_obj.state = make_empty_state(board_obj.width - 1, board_obj.height)
-    board_obj.width = board_obj.width - 1
-    board.clearRect(0, 0, document.getElementById("board").width, document.getElementById("board").height)
-    draw_grid(board, board_obj.width, board_obj.height)
-    board_obj.draw_state(board)
+    if (board_obj.width > 1) {
+        board_obj.state = make_empty_state(board_obj.width - 1, board_obj.height)
+        board_obj.width = board_obj.width - 1
+        board.clearRect(0, 0, document.getElementById("board").width, document.getElementById("board").height)
+        draw_grid(board, board_obj.width, board_obj.height)
+        board_obj.draw_state(board)
+    }
 })
 
 document.getElementById("increase_height").addEventListener("mouseup", function increase_height() {
@@ -209,9 +211,11 @@ document.getElementById("increase_height").addEventListener("mouseup", function 
 })
 
 document.getElementById("decrease_height").addEventListener("mouseup", function decrease_height() {
-    board_obj.state = make_empty_state(board_obj.width, board_obj.height - 1)
-    board_obj.height = board_obj.width - 1
-    board.clearRect(0, 0, document.getElementById("board").width, document.getElementById("board").height)
-    draw_grid(board, board_obj.width, board_obj.height)
-    board_obj.draw_state(board)
+    if (board_obj.height > 1) {
+        board_obj.state = make_empty_state(board_obj.width, board_obj.height - 1)
+        board_obj.height = board_obj.height - 1
+        board.clearRect(0, 0, document.getElementById("board").width, document.getElementById("board").height)
+        draw_grid(board, board_obj.width, board_obj.height)
+        board_obj.draw_state(board)
+    }
 })
