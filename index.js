@@ -42,13 +42,13 @@ board_obj = {
 
     change_cell: function(x, y) { 
         let alive
-        this.stack.push(['cell_change', x, y, this.state[x][y]])
-        if (this.state[x][y] == 1) {
-            this.state[x][y] = 0 
+        this.stack.push(['cell_change', x, y, this.state[y][x]])
+        if (this.state[y][x] == 1) {
+            this.state[y][x] = 0 
             alive = false
         }
         else {
-            this.state[x][y] = 1
+            this.state[y][x] = 1
             alive = true
         }
         fill_square(x, y, board, alive)
