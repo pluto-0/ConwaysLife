@@ -61,10 +61,11 @@ board_obj = {
         for (let change of possible_changes) {
             new_x = x + change[0]
             new_y = y + change[1]
-            if (new_x < 0 || new_x >= this.width || new_y < 0 || new_y >= this.height) {
+            if (new_x < 0 || new_x >= this.height || new_y < 0 || new_y >= this.width) {
                 continue
             }
-            if (this.state[new_x][new_y] == 1) {ans++}
+            try {if (this.state[new_x][new_y] == 1) {ans++}}
+            catch {console.log(new_x, new_y)}
         }
         return ans
     }
