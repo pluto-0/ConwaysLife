@@ -174,3 +174,11 @@ document.getElementById("width_val").addEventListener("change", function change_
     draw_grid(board, board_obj.width, board_obj.height)
     board_obj.draw_state(board)
 })
+
+document.getElementById("height_val").addEventListener("change", function change_height() {
+    board_obj.state = make_empty_state(board_obj.width, parseInt(this.value))
+    board_obj.height = parseInt(this.value)
+    board.clearRect(0, 0, document.getElementById("board").width, document.getElementById("board").height)
+    draw_grid(board, board_obj.width, board_obj.height)
+    board_obj.draw_state(board)
+})
