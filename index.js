@@ -28,10 +28,14 @@ board_obj = {
     },
 
     draw_state: function(board) {
+        let max_i = 0
+        let max_j = 0
         for (let i = 0; i < this.height; ++i) {
             for (let j = 0; j < this.width; ++ j) {
                 let alive = this.state[i][j] == 1
-                fill_square(i, j, board, alive)
+                fill_square(j, i, board, alive)
+                max_i = Math.max(i, max_i)
+                max_j = Math.max(j, max_j)
             }
         }
     },
@@ -86,7 +90,6 @@ function draw_grid(board, width, height) {
         board.lineTo(path_end[0], path_end[1]); 
         board.stroke(); 
     }
-
 }
 
 function fill_square(x, y, board, alive) {
@@ -167,5 +170,7 @@ document.getElementById("back").addEventListener("mouseup", () => {
 document.getElementById("width_val").addEventListener("change", function change_width() {
     board_obj.state = make_empty_state(parseInt(this.value), board_obj.height)
     board_obj.width = parseInt(this.value)
+    board.clearRect(0, 0, document.getElementById("board").width, document.getElementById("board").height)
     draw_grid(board, board_obj.width, board_obj.height)
+    board_obj.draw_state(board)
 })
