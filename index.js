@@ -1,6 +1,13 @@
 let board = document.getElementById("board").getContext("2d")
+function resize_board() {
+    document.getElementById("board").width = document.documentElement.clientWidth
+    document.getElementById("board").height = document.documentElement.clientHeight - document.getElementById("toolbar").clientHeight
+}
+resize_board()
+//window.addEventListener("resize", resize_board)
 
 board_obj = {
+    playing: false,
     width : Number(document.getElementById("width_val").value),
     height : Number(document.getElementById("height_val").value),
     state : make_empty_state(document.getElementById("width_val").value, document.getElementById("height_val").value),
@@ -135,6 +142,9 @@ function make_empty_state(width, height) {
     return ans
 }
 
+board.width = window.innerWidth
+board.height = window.innerHeight
+
 let canvas = document.getElementById("board")
 canvas.addEventListener("click", event => {
     const x_pixel_cords = event.x
@@ -219,3 +229,22 @@ document.getElementById("decrease_height").addEventListener("mouseup", function 
         board_obj.draw_state(board)
     }
 })
+
+document.getElementById("play").addEventListener("mouseup", () => {
+    function update(board) {
+        board_obj.update_state()
+        board_obj.draw_state(board)
+    }
+
+    if (! board_obj.playing) {
+        board_obj.playing = true
+        interval_id = setInterval(update, 50, board)
+    }
+    
+})
+document.getElementById("pause").addEventListener("mouseup", () => {
+        console.log(interval_id)
+        board_obj.playing = false
+        clearInterval(interval_id)
+})
+
