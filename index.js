@@ -4,80 +4,86 @@ function resize_board() {
     document.getElementById("board").height = document.documentElement.clientHeight - document.getElementById("toolbar").clientHeight
 }
 resize_board()
-//window.addEventListener("resize", resize_board)
+window.addEventListener("resize", () => {
+    resize_board()
+    board_obj.draw_state(board)
+})
 
-board_obj = {
-    playing: false,
-    width : Number(document.getElementById("width_val").value),
-    height : Number(document.getElementById("height_val").value),
-    state : make_empty_state(document.getElementById("width_val").value, document.getElementById("height_val").value),
-    stack: [],
-    is_alive : function (i, j) {
-        let neighbors = this.alive_neighbors(i, j)
-        if (this.state[i][j] == 1) {
-            if (neighbors == 2 || neighbors == 3) {return true}
+function make_board() {
+    board_obj = {
+        playing: false,
+        width : Number(document.getElementById("width_val").value),
+        height : Number(document.getElementById("height_val").value),
+        state : make_empty_state(document.getElementById("width_val").value, document.getElementById("height_val").value),
+        stack: [],
+        is_alive : function (i, j) {
+            let neighbors = this.alive_neighbors(i, j)
+            if (this.state[i][j] == 1) {
+                if (neighbors == 2 || neighbors == 3) {return true}
+                return false
+            }
+            if (neighbors == 3) {return true}
             return false
-        }
-        if (neighbors == 3) {return true}
-        return false
-    },
+        },
 
-    update_state : function() {
-        let state_copy = make_empty_state(this.width, this.height)
-        for (let i = 0; i < this.height; ++i) {
-            for (let j = 0; j < this.width; ++j) {
-                if (this.is_alive(i, j)) {state_copy[i][j] = 1}
-                else {state_copy[i][j] = 0}
+        update_state : function() {
+            let state_copy = make_empty_state(this.width, this.height)
+            for (let i = 0; i < this.height; ++i) {
+                for (let j = 0; j < this.width; ++j) {
+                    if (this.is_alive(i, j)) {state_copy[i][j] = 1}
+                    else {state_copy[i][j] = 0}
+                }
             }
-        }
-        this.stack.push(['update', this.state])
-        this.state = state_copy
-    },
+            this.stack.push(['update', this.state])
+            this.state = state_copy
+        },
 
-    draw_state: function(board) {
-        let max_i = 0
-        let max_j = 0
-        for (let i = 0; i < this.height; ++i) {
-            for (let j = 0; j < this.width; ++ j) {
-                let alive = this.state[i][j] == 1
-                fill_square(j, i, board, alive)
-                max_i = Math.max(i, max_i)
-                max_j = Math.max(j, max_j)
+        draw_state: function(board) {
+            let max_i = 0
+            let max_j = 0
+            for (let i = 0; i < this.height; ++i) {
+                for (let j = 0; j < this.width; ++ j) {
+                    let alive = this.state[i][j] == 1
+                    fill_square(j, i, board, alive)
+                    max_i = Math.max(i, max_i)
+                    max_j = Math.max(j, max_j)
+                }
             }
-        }
-    },
+        },
 
-    change_cell: function(x, y) { 
-        let alive
-        this.stack.push(['cell_change', x, y, this.state[y][x]])
-        if (this.state[y][x] == 1) {
-            this.state[y][x] = 0 
-            alive = false
-        }
-        else {
-            this.state[y][x] = 1
-            alive = true
-        }
-        fill_square(x, y, board, alive)
-    },
-
-    alive_neighbors: function(x, y) {
-        const possible_changes = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]]
-        let ans = 0
-        let new_x, new_y
-        for (let change of possible_changes) {
-            new_x = x + change[0]
-            new_y = y + change[1]
-            if (new_x < 0 || new_x >= this.height || new_y < 0 || new_y >= this.width) {
-                continue
+        change_cell: function(x, y) { 
+            let alive
+            this.stack.push(['cell_change', x, y, this.state[y][x]])
+            if (this.state[y][x] == 1) {
+                this.state[y][x] = 0 
+                alive = false
             }
-            try {if (this.state[new_x][new_y] == 1) {ans++}}
-            catch {console.log(new_x, new_y)}
+            else {
+                this.state[y][x] = 1
+                alive = true
+            }
+            fill_square(x, y, board, alive)
+        },
+
+        alive_neighbors: function(x, y) {
+            const possible_changes = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]]
+            let ans = 0
+            let new_x, new_y
+            for (let change of possible_changes) {
+                new_x = x + change[0]
+                new_y = y + change[1]
+                if (new_x < 0 || new_x >= this.height || new_y < 0 || new_y >= this.width) {
+                    continue
+                }
+                try {if (this.state[new_x][new_y] == 1) {ans++}}
+                catch {console.log(new_x, new_y)}
+            }
+            return ans
         }
-        return ans
     }
+    return board_obj
 }
-
+board_obj = make_board()
 
 function draw_grid(board, width, height) {
     board.fillStyle = "grey"
